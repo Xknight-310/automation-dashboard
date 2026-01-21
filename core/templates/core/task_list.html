@@ -1,0 +1,26 @@
+<p>
+  <a href="{% url 'task_list' %}">All</a> |
+  <a href="?filter=today">Today</a> |
+  <a href="?filter=week">This week</a> |
+  <a href="?filter=done">Completed</a>
+</p>
+
+<ul>
+  {% for task in tasks %}
+    <li>
+      <strong>
+        {% if task.is_overdue %}
+          ⚠️ {{ task.title }}
+        {% else %}
+          {{ task.title }}
+        {% endif %}
+      </strong>
+      ({{ task.status }})
+      {% if task.due_date %}
+        - due {{ task.due_date }}
+      {% endif %}
+      <a href="{% url 'task_update' task.id %}">Edit</a>
+      <a href="{% url 'task_delete' task.id %}">Delete</a>
+    </li>
+  {% endfor %}
+</ul>
