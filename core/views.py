@@ -7,7 +7,7 @@ from django.utils import timezone
 # Create your views here.
 
 def home(request):
-    data = {"username": request.user.id}
+    data = {"user": request.user}
     return render(request, "core/home.html", context= data)
 
 @login_required
@@ -46,14 +46,12 @@ def task_delete(request, pk):
 
 @login_required
 def task_list(request):
-    filter_type = request.GET.get("filter")
+    filter_type = request.GET.get("filter", "week")
+    sort_type = request.GET.get("sort", "due_date")
 
     tasks = Task.objects.filter(user=request.user)
-    if filter_type == "last_week":
-        tasks = tasks.filter(
-            due_date__lte=timezone.now().date() + timezone.timedelta(days=-7)
-            )
-    elif filter_type == "today":
+    
+    if filter_type == "today":
         tasks = tasks.filter(due_date=timezone.now().date())
     elif filter_type == "week":
         tasks = tasks.filter(
@@ -61,10 +59,14 @@ def task_list(request):
         )
     elif filter_type == "done":
         tasks = tasks.filter(status="done")
-    tasks = tasks.order_by("due_date")
+    if sort_type == "due_date":
+        tasks = tasks.order_by("due_date")
+    elif sort_type == "priority":
+        tasks = tasks.order_by("priority")
+    else: tasks = tasks.order_by("priority")
 
     return render(
         request,
         "core/task_list.html",
-        {"tasks": tasks, "filter_type": filter_type},
+        {"tasks": tasks, "filter_type": filter_type, "sort_type": sort_type},
     )

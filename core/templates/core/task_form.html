@@ -1,9 +1,14 @@
-<h1>Task</h1>
+{% extends "core/base.html" %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Save</button>
-</form>
+{% block content %}
+  <h1>Task</h1>
 
-<a href="{% url 'task_list' %}">Back</a>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div style="margin-top:12px; display:flex; gap:8px;">
+      <button type="submit">Save</button>
+      <a class="btn secondary" href="{% url 'task_list' %}">Back</a>
+    </div>
+  </form>
+{% endblock %}

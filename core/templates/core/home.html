@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Automation Dashboard</title>
-</head>
-<body>
-    <h1>Automation Dashboard {{ username }} </h1>
-    <p>If this loads, the app is alive.</p>
-</body>
-</html>
+{% extends "core/base.html" %}
+
+{% block content %}
+    <h1>Welcome, {{ user.username }}</h1>
+    <p class="muted">If this loads, the app is alive.</p>
+    <div class="actions" style="margin-top:14px">
+        <a class="btn" href="/tasks">My tasks</a>
+    </div>
+{% endblock %}

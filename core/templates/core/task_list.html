@@ -1,26 +1,61 @@
-<p>
-  <a href="{% url 'task_list' %}">All</a> |
-  <a href="?filter=today">Today</a> |
-  <a href="?filter=week">This week</a> |
-  <a href="?filter=done">Completed</a>
-</p>
+{% extends "core/base.html" %}
 
-<ul>
-  {% for task in tasks %}
-    <li>
-      <strong>
-        {% if task.is_overdue %}
-          ⚠️ {{ task.title }}
+{% block content %}
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h2>Tasks</h2>
+    <div class="actions">
+      <a class="btn" href="{% url 'task_create' %}">New Task</a>
+    </div>
+  </div>
+
+  <div class="filters" style="margin:10px 0">
+    <div>
+      <label class="muted">Sort</label>
+      <select name="sort" id="sort" onchange="location = this.value">
+        {% if sort_type == "priority" %}
+          <option value="?sort=priority&filter={{ filter_type }}" selected>priority</option>
+          <option value="?sort=due_date&filter={{ filter_type }}">due date</option>
         {% else %}
-          {{ task.title }}
+          <option value="?sort=priority&filter={{ filter_type }}">priority</option>
+          <option value="?sort=due_date&filter={{ filter_type }}" selected>due date</option>
         {% endif %}
-      </strong>
-      ({{ task.status }})
-      {% if task.due_date %}
-        - due {{ task.due_date }}
-      {% endif %}
-      <a href="{% url 'task_update' task.id %}">Edit</a>
-      <a href="{% url 'task_delete' task.id %}">Delete</a>
-    </li>
-  {% endfor %}
-</ul>
+      </select>
+    </div>
+
+    <div>
+      <label class="muted">Filter</label>
+      <select name="filter" id="filter" onchange="location = this.value">
+        <option value="?filter=today&sort={{ sort_type }}" {% if filter_type == "today" %}selected{% endif %}>Today</option>
+        <option value="?filter=week&sort={{ sort_type }}" {% if filter_type == "week" %}selected{% endif %}>This week</option>
+        <option value="?filter=done&sort={{ sort_type }}" {% if filter_type == "done" %}selected{% endif %}>Completed</option>
+      </select>
+    </div>
+
+    <div style="margin-left:auto">
+      <a class="btn secondary" href="{% url 'task_list' %}">Show All</a>
+    </div>
+  </div>
+
+  <ul>
+    {% for task in tasks %}
+      <li class="card" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="task-title">
+            {% if task.is_overdue %}
+              <span class="overdue">⚠️ {{ task.title }} </span>
+            {% elif task.is_complete %}
+              <span class="done">✅ {{ task.title }}</span>
+            {% else %}
+              {{ task.title }}
+            {% endif %}
+          </div>
+          <div class="muted" style="font-size:0.9rem">{{ task.status }} · {{ task.priority }} {% if task.due_date %}- due {{ task.due_date }}{% endif %}</div>
+        </div>
+        <div class="actions">
+          <a class="btn secondary" href="{% url 'task_update' task.id %}">Edit</a>
+          <a class="btn secondary" href="{% url 'task_delete' task.id %}">Delete</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

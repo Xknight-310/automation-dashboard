@@ -10,6 +10,11 @@ class Task(models.Model):
         ("doing", "Doing"),
         ("done", "Done"),
     ]
+    PRIORITY_CHOICES = [
+        ("high", "High"),
+        ("medium", "Medium"),
+        ("low", "Low"),
+    ]
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -24,6 +29,11 @@ class Task(models.Model):
         choices=STATUS_CHOICES,
         default="todo"
     )
+    priority = models.CharField(
+        max_length=10,
+        choices=PRIORITY_CHOICES,
+        default="medium"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -35,3 +45,6 @@ class Task(models.Model):
             and self.due_date < timezone.now().date()
             and self.status != "done"
         )
+    
+    def is_complete(self):
+        return(self.status == "done")
