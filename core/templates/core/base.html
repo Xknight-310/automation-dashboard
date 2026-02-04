@@ -16,13 +16,17 @@
     <div class="container" style="display:flex; align-items:center; width:100%;">
       <div class="site-title">Automation Dashboard</div>
       <nav class="site-nav">
+        <p>
         {% if user.is_authenticated %}
+          <p class="username">{{user.username}} |</p>
           <a href="/">Home</a>
           <a href="/tasks">Tasks</a>
+          <a href="{% url 'stats' %}">Stats</a>
           <a href="{% url 'logout' %}">Logout</a>
         {% else %}
           <a href="{% url 'login' %}">Login</a>
         {% endif %}
+        </p>
       </nav>
     </div>
   </header>

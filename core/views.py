@@ -1,8 +1,15 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from .models import *
 from .forms import TaskForm
 from django.utils import timezone
+import json
+from django.utils.safestring import mark_safe
+from core.services.stats import (
+    task_completion_stats,
+    weekly_productivity,
+)
 
 # Create your views here.
 
@@ -17,6 +24,8 @@ def task_create(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.user = request.user
+            if task.status == "done" and not task.completed_at:
+                task.completed_at = timezone.now()
             task.save()
             return redirect("task_list")
     else:
@@ -29,7 +38,10 @@ def task_update(request, pk):
     if request.method == "POST":
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
-            form.save()
+            task = form.save(commit=False)
+            if task.status == "done" and not task.completed_at:
+                task.completed_at = timezone.now()
+            task.save()
             return redirect("task_list")
     else:
         form = TaskForm(instance=task)
@@ -70,3 +82,20 @@ def task_list(request):
         "core/task_list.html",
         {"tasks": tasks, "filter_type": filter_type, "sort_type": sort_type},
     )
+
+
+@login_required
+def stats_view(request):
+    print(weekly_productivity(request.user))
+    return render(
+        request,
+        "core/stats.html",
+        {
+            "stats": task_completion_stats(request.user),
+            "weekly_data": (weekly_productivity(request.user)),
+        },
+    )
+
+def logout_view(request):
+    logout(request)
+    return redirect("home")

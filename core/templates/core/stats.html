@@ -1,0 +1,108 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    
+
+<h1>Statistics</h1>
+
+<section>
+    <h2>Overview</h2>
+    <ul class="muted">
+        <li>Total tasks: <strong>{{ stats.total }}</strong></li>
+        <li>Completed tasks: <strong>{{ stats.completed }}</strong></li>
+        <li>Open tasks: <strong>{{ stats.open }}</strong></li>
+        <li>Completion rate: <strong>{{ stats.completion_rate }}%</strong></li>
+    </ul>
+</section>
+
+<hr>
+
+<section>
+    <h2>Weekly productivity</h2>
+    {% if weekly_data.fake %}
+        <p style="color: red;">[WARNING] This is fake data because you don't have data to show on this graph</p>
+    {% endif %}
+    <canvas id="weeklyChart" width="400" height="200" style="color: var(--muted);"></canvas>
+</section>
+
+<hr>
+
+<section>
+    <h2>Tasks by status</h2>
+    <ul class="muted">
+        {% for item in stats.by_status %}
+            <li>{{ item.status }}: {{ item.count }}</li>
+        {% empty %}
+            <li>No data</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section>
+    <h2>Tasks by priority</h2>
+    <ul class="muted">
+        {% for item in stats.by_priority %}
+            <li>{{ item.priority }}: {{ item.count }}</li>
+        {% empty %}
+            <li>No data</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const weeklyData = {{ weekly_data.result|safe }}; 
+
+    const labels = weeklyData.map(item => item.day);
+    const values = weeklyData.map(item => item.count);
+
+    const ctx = document.getElementById('weeklyChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tasks completed',
+                data: values,
+                backgroundColor: 'rgba(6, 182, 212, 0.6)',
+                borderColor: 'rgba(6, 182, 212, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'rgba(154,166,178, 1)'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: 'rgba(154,166,178, 1)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        color: 'rgba(154,166,178, 1)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}
+

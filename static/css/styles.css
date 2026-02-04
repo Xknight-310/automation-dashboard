@@ -8,6 +8,7 @@
   --accent:#06b6d4;
   --accent-2:#7c3aed;
   --surface:#0e1420;
+  --rose: #e413bee2;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -31,6 +32,7 @@ body{
 .site-title{font-weight:700; font-size:2.05rem; color:var(--title); }
 .site-nav{margin-left:auto; display:flex; gap:12px; align-items:center}
 .site-nav a{color:var(--muted); text-decoration:none; font-weight:600}
+p.username{color:var(--muted); text-decoration:none; font-weight:600; margin-bottom: 0; }
 .container{max-width:980px; margin:28px auto; padding:0 18px}
 .card{
   background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));

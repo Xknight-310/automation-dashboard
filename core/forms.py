@@ -2,11 +2,11 @@ from django import forms
 from .models import Task
 
 class TaskForm(forms.ModelForm):
-    due_date = forms.DateField(
-        input_formats=['%d-%m-%Y'],
-        widget=forms.DateInput(attrs={'placeholder': 'DD-MM-YYYY'}),
-        required=False
-    )
+    # due_date = forms.DateField(
+    #     input_formats=['%d-%m-%Y'],
+    #     widget=forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD'}),
+    #     required=False
+    # )
     
     class Meta:
         model = Task
@@ -14,4 +14,5 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'Enter task title'}),
             'description': forms.Textarea(attrs={'placeholder': 'Enter task description'}),
+            'due_date': forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD'}),
         }
